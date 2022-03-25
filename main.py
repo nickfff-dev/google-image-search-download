@@ -25,8 +25,8 @@ options.add_argument('--disable-gpu')
 driver = webdriver.Chrome(options=options)
 wait = WebDriverWait(driver, 10)
 
-product_data={"title":[], "imagename": [], "img_url": [],"SellerSku": []}
-download_manual = {"title":[], "img_url": [],"SellerSku": []}
+product_data={"title":[], "imagename": [], "img_url": []}
+
 
 
 
@@ -66,10 +66,10 @@ def getExtension(img_src):
 
 
 
+csvname  = input("Enter the name of the csv file: ")
 
 
-
-filz = open("tunahama.csv", "r")
+filz = open(csvname, "r")
 csvFile = csv.DictReader(filz)
 
 
@@ -121,29 +121,18 @@ for line in csvFile:
             if (
                     img_src.startswith("data:image")    
                 ):
-                    print("invalid link")
-            elif ("cdnprod.mafretailproxy.com" in img_src
-                or "copia.co.ke" in img_src or "msuper.co.ke" in img_src or "e-mart.co.ke" in img_src or "ke.jumia.is/unsafe" in img_src or "www.sangyug.com" in img_src):
-                    try:
-                        download_manual["title"].append(line["title"])
-                        download_manual["img_url"].append(img_src)
-                        download_manual["SellerSku"].append(line["SellerSku"])
-                    except:
-                        print("error")
+                    print("base64encodedimage")
             else:
                 ext = getExtension(img_src)
                 try:
-                    downloadObj.downloadFile(img_src, f"remaining/{clean_title}.{ext}")
+                    downloadObj.downloadFile(img_src, f"images/{clean_title}.{ext}")
                     product_data["title"].append(line["title"])
                     product_data["imagename"].append(f"{clean_title}.{ext}")
-                    product_data["SellerSku"].append(line["SellerSku"])
                     product_data["img_url"].append(img_src)
                 except:
                     print("error")
         with open('upload.json', 'w') as f:
             json.dump(product_data, f)
-        with open('download.json', 'w') as f:
-            json.dump(download_manual, f)
         break
                 
                

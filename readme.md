@@ -1,4 +1,4 @@
-this script takes a csv with two columns: one column has the product title, and the other the product SKu. the script searches google images for the right product image by comparing the product title string and the image alt attribute text, to find matches, and downloads  the image with the correct matches then it renames the image with the corresponding SKU,
+this script takes a csv with  one column  that has the product title. the script searches google images for the right product image by comparing the product title string and the image alt attribute text, to find matches, and downloads  the image with the correct matches with the title as the image name.
 
 install all the dependencies in a venv
 
@@ -13,11 +13,15 @@ install all the dependencies in a venv
     pip install pandas
 
 
-mimetypes is a standard built in lib for detecting image extension in this case but wget has to be downloaded from <a href="http://gnuwin32.sourceforge.net/packages/wget.htm"> here</a> and made available to PATH before you can pip install wget and use it in the script <a href="https://phoenixnap.com/kb/wget-command-with-examples">find installation guide and adding to path here</a>
+mimetypes is a standard built in lib for detecting image extension in this case.
 
-the script uses selenium and chrome driver(download the version of chromedriver that matches with your browser version ) to run the search and wget to manage the downloads
+wget has to be downloaded from <a href="http://gnuwin32.sourceforge.net/packages/wget.htm"> here</a> and made available to PATH before you can pip install wget and use it in the script. <a href="https://phoenixnap.com/kb/wget-command-with-examples">find installation guide and adding to path here</a>
 
-to initialize add the csv with "SellerSku" and "title" columns to the script folder
+the script uses selenium and chrome driver(download the latest version of chromedriver that matches with your browser version) to run the search and wget to manage the downloads
+
+to initialize add the csv with "title" column to the script folder
+ensure you have a folder named "images" in the same folder as the script
+ensure you have chromedriver in the same folder as the script
 activate venv 
 
     env/Scripts/Activate.ps1
