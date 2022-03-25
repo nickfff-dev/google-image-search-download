@@ -1,2 +1,4 @@
 this script takes a csv with two columns one column has the product title and the other the product SKu, the script searches google images for the right product image by comparing the product title string and the image alt attribute text to find matches and downloads  the image with the correct matches then it renames the image with the corresponding SKU,
-the script uses selenium to run the search and wget to manage the downloads
+
+install all the dependencies in a venv but wget has to be downloaded from <a href="http://gnuwin32.sourceforge.net/packages/wget.htm"> here</a>  available in PATH before you can use pip install and use it in the script <a href="https://phoenixnap.com/kb/wget-command-with-examples">find installation guide and adding to path here</a>
+the script uses selenium and chrome driver(download the version of chromedriver that matches with your browser version ) to run the search and wget to manage the downloads
