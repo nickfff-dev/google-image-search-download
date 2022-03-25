@@ -12,7 +12,7 @@ import sys
 import pandas as pd
 import csv
 import json
-
+import base64
 import re
 
 from wget import download
@@ -122,6 +122,15 @@ for line in csvFile:
                     img_src.startswith("data:image")    
                 ):
                     print("base64encodedimage")
+                    decode_img = base64.b64decode(img_src.split(",")[1])
+                    ext = getExtension(img_src)
+                    img_name = f'{cleanFilename(img_alt)}.{ext}'
+                    img_path = f"dataimages/{img_name}"
+                    with open(img_path, "wb") as f:
+                        f.write(decode_img)
+                        product_data["title"].append(line["title"])
+                        product_data["imagename"].append(img_name)
+
             else:
                 ext = getExtension(img_src)
                 try:
@@ -131,6 +140,7 @@ for line in csvFile:
                     product_data["img_url"].append(img_src)
                 except:
                     print("error")
+                    break
         with open('upload.json', 'w') as f:
             json.dump(product_data, f)
         break
