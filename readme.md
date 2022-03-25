@@ -2,9 +2,13 @@ this script takes a csv with two columns one column has the product title and th
 
 install all the dependencies in a venv
     python -m venv env
+
     env/Scripts/Activate.ps1
+
     pip install selenium
+
     pip install wget
+    
     pip install pandas
 
 
