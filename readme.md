@@ -20,8 +20,11 @@ wget has to be downloaded from <a href="http://gnuwin32.sourceforge.net/packages
 the script uses selenium and chrome driver(download the latest version of chromedriver that matches with your browser version) to run the search and wget to manage the downloads
 
 to initialize add the csv with "title" column to the script folder
+
 ensure you have a folder named "images" in the same folder as the script
+
 ensure you have chromedriver in the same folder as the script
+
 activate venv 
 
     env/Scripts/Activate.ps1
