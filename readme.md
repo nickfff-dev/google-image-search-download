@@ -1,0 +1,2 @@
+this script takes a csv with two columns one column has the product title and the other the product SKu, the script searches google images for the right product image by comparing the product title string and the image alt attribute text to find matches and downloads  the image with the correct matches then it renames the image with the corresponding SKU,
+the script uses selenium to run the search and wget to manage the downloads
