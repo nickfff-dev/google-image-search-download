@@ -12,6 +12,7 @@ install all the dependencies in a venv
 
     pip install pandas
 
+base64 is a standard built in lib for decoding the image data in base64 format so that it can be saved as a file.
 
 mimetypes is a standard built in lib for detecting image extension in this case.
 
