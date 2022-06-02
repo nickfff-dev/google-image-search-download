@@ -122,7 +122,7 @@ for line in csvFile:
             if img_src.startswith("data:image"):
                 try:
                     decode_img = base64.b64decode(img_src.split(",")[1])
-                    img_path = f"dataimages/{img_name}"
+                    img_path = f"images/{img_name}"
                     with open(img_path, "wb") as f:
                         f.write(decode_img)
                     
