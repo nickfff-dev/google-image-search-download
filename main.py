@@ -6,13 +6,16 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import TimeoutException
+from fuzzywuzzy import fuzz
+from fuzzywuzzy import process
 import time
 import os
 import sys
 import pandas as pd
 import csv
-import json
 import base64
+import json
+
 import re
 
 from wget import download
@@ -25,7 +28,7 @@ options.add_argument('--disable-gpu')
 driver = webdriver.Chrome(options=options)
 wait = WebDriverWait(driver, 10)
 
-product_data={"title":[], "imagename": [], "img_url": []}
+
 
 
 
@@ -66,15 +69,16 @@ def getExtension(img_src):
 
 
 
-csvname  = input("Enter the name of the csv file: ")
 
 
-filz = open(csvname, "r")
+
+# sourcery skip: do-not-use-bare-except
+filz = open("searchterms.csv", "r")
 csvFile = csv.DictReader(filz)
 
 
 for line in csvFile:
-    clean_title = cleanFilename(line["title"]).replace("  "," ")
+    clean_title = cleanFilename(line["terms"]).replace("  "," ")
     query = clean_title.replace(" ","+")
     print(query)
     driver.get(
@@ -90,65 +94,50 @@ for line in csvFile:
     except:
         print("bad search term")
     # get first row images
-
-    first_five = all_images[:30]
-    for i in range(len(first_five)):
-        img_alt =  first_five[i].get_attribute("alt")
-        text_1 = img_alt.lower().split(" ")
-        print(text_1)
-        # print(text_1)
-        text_2 = line["title"].replace(")", "").replace("(", "").replace("&","").replace("-","").lower().split(" ")
-        for txc in text_2:
-            if txc in ["", "brand"]:
-                text_2.remove(txc)
-
-        print(text_2)
-        matches = [text for text in text_1 if text in text_2]
-        print(matches)
-        # print(matches , len(matches), len(text_1), len(text_2))
-        if len(matches) >= (len(text_2) /2):
-            try:
-                element = first_five[i]
-                element.click()
-                time.sleep(10)
-                full_image = wait.until(EC.presence_of_element_located((By.XPATH, "/html/body/div[2]/c-wiz/div[3]/div[2]/div[3]/div/div/div[3]/div[2]/c-wiz/div/div[1]/div[1]/div[2]/div/a/img")))
-                img_src = full_image.get_attribute("src")
-                print(img_src, line["title"])
-
-            except:
-                print("no full image")
-                img_src = ""
-            if (
-                    img_src.startswith("data:image")    
-                ):
-                    print("base64encodedimage")
+    text_2 = line["terms"].replace(")", "").replace("(", "").replace("&","").replace("-","").lower()
+    chosen_img = []
+    chosen_score= []
+    for img in all_images:
+        img_text = cleanFilename(img.get_attribute("alt")).lower()
+        score = fuzz.ratio(text_2, img_text)
+        if score > 50:
+            chosen_img.append(img)
+            chosen_score.append(score)
+    if chosen_img:
+        chosen_score = sorted(chosen_score, reverse=True)
+        lucky_score = chosen_score[0]
+        lucky_img = chosen_img[chosen_score.index(lucky_score)]
+        try:
+            lucky_img.click()
+            time.sleep(5)
+            full_image = wait.until(EC.presence_of_element_located((By.XPATH, "/html/body/div[3]/c-wiz/div[3]/div[2]/div[3]/div/div/div[3]/div[2]/c-wiz/div/div[1]/div[1]/div[3]/div/a/img")))
+        except:
+            print("no image")
+            continue
+        try:
+            img_src = full_image.get_attribute("src")
+            print(lucky_score, line["terms"], img_src)
+            ext = getExtension(img_src)
+            img_name = cleanFilename(line["terms"]) + "." + ext
+            if img_src.startswith("data:image"):
+                try:
                     decode_img = base64.b64decode(img_src.split(",")[1])
-                    ext = getExtension(img_src)
-                    img_name = f'{cleanFilename(img_alt)}.{ext}'
                     img_path = f"dataimages/{img_name}"
                     with open(img_path, "wb") as f:
                         f.write(decode_img)
-                        product_data["title"].append(line["title"])
-                        product_data["imagename"].append(img_name)
-
-            else:
-                ext = getExtension(img_src)
-                try:
-                    downloadObj.downloadFile(img_src, f"images/{clean_title}.{ext}")
-                    product_data["title"].append(line["title"])
-                    product_data["imagename"].append(f"{clean_title}.{ext}")
-                    product_data["img_url"].append(img_src)
+                    
                 except:
-                    print("error")
-                    break
-        with open('upload.json', 'w') as f:
-            json.dump(product_data, f)
-        break
-                
-               
-            
-        
+                    print("bad image")
+            else:
+                try:
+                    downloadObj.downloadFile(img_src, "images/" + img_name)
+                except:
+                    print("bad image")
+        except:
+            print("no full image")
+    else:
+        print("no image")
+    
+    
 
 
-
-      
